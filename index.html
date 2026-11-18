@@ -260,10 +260,30 @@ main { position: relative; z-index: 1; animation: mainIn 1s ease both; }
 .block { padding-block: clamp(40px, 6vw, 80px); }
 .block h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 30px; max-width: 28rem; color: var(--ink); }
 
-.reasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-.reason { background: rgba(255, 255, 255, 0.94); border-top: 2px solid var(--sun); padding: 22px; border-radius: 16px; min-width: 0; box-shadow: 0 10px 30px rgba(244, 63, 94, 0.05); border: 1px solid var(--line); }
+/* ---------- Reasons Grid Layout (2 columns on Tab/Desktop, Side-by-Side) ---------- */
+.reasons { 
+  display: grid; 
+  grid-template-columns: repeat(2, minmax(0, 1fr)); 
+  gap: 20px; 
+}
+.reason { 
+  background: rgba(255, 255, 255, 0.94); 
+  border-top: 2px solid var(--sun); 
+  padding: 22px; 
+  border-radius: 16px; 
+  min-width: 0; 
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.05); 
+  border: 1px solid var(--line); 
+}
 .reason h3 { font-size: 1.2rem; margin-bottom: 6px; color: var(--sun); }
 .reason p { color: #7B4B57; font-size: .95rem; }
+
+/* If total items are odd, make the last one span full width on tablets/desktops if desired, or let grid wrap naturally */
+@media (max-width: 640px) {
+  .reasons {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ---------- Card Shuffle Gallery ---------- */
 .deck-container {
@@ -350,33 +370,35 @@ main { position: relative; z-index: 1; animation: mainIn 1s ease both; }
 .letter p { font-family: var(--font-display); font-style: italic; font-size: clamp(1rem, 2.3vw, 1.2rem); line-height: 1.75; margin-bottom: 12px; color: var(--ink); }
 .letter .sign { color: var(--sun); margin: 18px 0 0; text-align: right; font-weight: 500; }
 
-/* ---------- Poem Section (Separate Section) ---------- */
+/* ---------- Poem Section (Single Line Unbroken & Scaled) ---------- */
 .poem-card {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: clamp(24px, 5vw, 48px);
-  max-width: 820px;
+  padding: clamp(20px, 4vw, 40px);
+  max-width: 880px;
   margin-inline: auto;
   box-shadow: 0 15px 35px rgba(244, 63, 94, 0.06);
+  overflow-x: auto;
 }
 
 .poem-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
+  width: 100%;
 }
 
 .poem-line {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
-  line-height: 1.6;
+  font-size: clamp(0.85rem, 2.1vw, 1.2rem);
+  line-height: 1.5;
   color: var(--ink);
   text-align: left;
+  white-space: nowrap; /* Ensures each verse stays on a single line */
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 4px;
 }
@@ -578,7 +600,7 @@ footer p { font-family: var(--font-display); font-style: italic; font-size: 1rem
     <div class="letter rv" id="letter"></div>
   </section>
 
-  <!-- Separate Poem Section with SANJANA Highlighted Line-by-Line -->
+  <!-- Separate Poem Section with SANJANA Highlighted Line-by-Line (Single Line Each) -->
   <section class="block">
     <div class="eyebrow rv">Special Verses</div>
     <h2 class="rv">A poetic line for you</h2>
@@ -720,7 +742,7 @@ function handleImgFallback(img, basePath) {
   $('#letter').innerHTML = CONFIG.letter.map(l => `<p>${esc(l)}</p>`).join('') +
     `<p class="sign">${esc(CONFIG.sign)}</p>`;
 
-  // Render Poem lines separately in a clean uniform column
+  // Render Poem lines separately in a clean uniform column without breaking lines
   const poemContainer = $('#poemContainer');
   poemContainer.innerHTML = CONFIG.poem.map(lineObj => {
     let htmlText = esc(lineObj.text);
